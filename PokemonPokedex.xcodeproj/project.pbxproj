@@ -16,6 +16,8 @@
 		3839F1622A60D00700212197 /* DataPersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3839F1612A60D00700212197 /* DataPersistenceManager.swift */; };
 		3839F1652A60D03600212197 /* FavoritedPokemonModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3839F1632A60D03600212197 /* FavoritedPokemonModel.xcdatamodeld */; };
 		3839F1672A60D32500212197 /* PokemonEntityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3839F1662A60D32500212197 /* PokemonEntityModel.swift */; };
+		3839F16A2A6132D000212197 /* DownloadTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3839F1682A6132D000212197 /* DownloadTableViewCell.swift */; };
+		3839F16B2A6132D000212197 /* DownloadTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3839F1692A6132D000212197 /* DownloadTableViewCell.xib */; };
 		385F4B662A5D479B00A1CA6B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385F4B652A5D479B00A1CA6B /* AppDelegate.swift */; };
 		385F4B682A5D479B00A1CA6B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385F4B672A5D479B00A1CA6B /* SceneDelegate.swift */; };
 		385F4B6A2A5D479B00A1CA6B /* PokedexViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385F4B692A5D479B00A1CA6B /* PokedexViewController.swift */; };
@@ -45,6 +47,8 @@
 		3839F1612A60D00700212197 /* DataPersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPersistenceManager.swift; sourceTree = "<group>"; };
 		3839F1642A60D03600212197 /* FavoritedPokemonModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FavoritedPokemonModel.xcdatamodel; sourceTree = "<group>"; };
 		3839F1662A60D32500212197 /* PokemonEntityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonEntityModel.swift; sourceTree = "<group>"; };
+		3839F1682A6132D000212197 /* DownloadTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTableViewCell.swift; sourceTree = "<group>"; };
+		3839F1692A6132D000212197 /* DownloadTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DownloadTableViewCell.xib; sourceTree = "<group>"; };
 		385F4B622A5D479B00A1CA6B /* PokemonPokedex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokemonPokedex.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		385F4B652A5D479B00A1CA6B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		385F4B672A5D479B00A1CA6B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -111,6 +115,8 @@
 			children = (
 				388358E62A5E333C000FE99C /* PokedexCollectionViewCell.swift */,
 				388358E82A5E3368000FE99C /* PokedexCollectionViewCell.xib */,
+				3839F1682A6132D000212197 /* DownloadTableViewCell.swift */,
+				3839F1692A6132D000212197 /* DownloadTableViewCell.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -241,6 +247,7 @@
 				388358F02A5E3BD8000FE99C /* Poppins-Regular.ttf in Resources */,
 				385F4B722A5D479D00A1CA6B /* LaunchScreen.storyboard in Resources */,
 				38D7CF6C2A5EE095008C59BF /* DetailAboutStoryboard.storyboard in Resources */,
+				3839F16B2A6132D000212197 /* DownloadTableViewCell.xib in Resources */,
 				385F4B6F2A5D479D00A1CA6B /* Assets.xcassets in Resources */,
 				3814D09D2A5F23170068151C /* DetailMovesStoryboard.storyboard in Resources */,
 				388358F12A5E3BD8000FE99C /* Poppins-SemiBold.ttf in Resources */,
@@ -258,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				38D7CF692A5EE06C008C59BF /* DetailAboutViewController.swift in Sources */,
+				3839F16A2A6132D000212197 /* DownloadTableViewCell.swift in Sources */,
 				3814D09B2A5F23000068151C /* DetailMovesViewController.swift in Sources */,
 				38D7CF6E2A5F05CC008C59BF /* DetailStatsViewController.swift in Sources */,
 				388358DA2A5E28D3000FE99C /* Extensions.swift in Sources */,

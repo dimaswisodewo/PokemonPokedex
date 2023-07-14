@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Poppins-Bold.ttf">
+            <string>Poppins-Bold</string>
+        </array>
+        <array key="Poppins-Regular.ttf">
+            <string>Poppins-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="DownloadTableViewCell" rowHeight="160" id="KGk-i7-Jjw" customClass="DownloadTableViewCell" customModule="PokemonPokedex" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="160"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="160"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oAA-mN-c7V">
+                        <rect key="frame" x="10" y="5" width="300" height="150"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.55000001192092896" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PokeballAlpha" translatesAutoresizingMaskIntoConstraints="NO" id="ufJ-Hv-dVk">
+                                <rect key="frame" x="170" y="30" width="150" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="ufJ-Hv-dVk" secondAttribute="height" multiplier="1:1" id="HUc-6D-FjG"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NyS-rS-biY">
+                                <rect key="frame" x="180" y="30" width="120" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="NyS-rS-biY" secondAttribute="height" multiplier="1:1" id="4On-iE-9yz"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t9P-du-7PT">
+                                <rect key="frame" x="20" y="31.999999999999996" width="260" height="33.666666666666657"/>
+                                <fontDescription key="fontDescription" name="Poppins-Bold" family="Poppins" pointSize="24"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ISB-0G-zre">
+                                <rect key="frame" x="20" y="73.666666666666671" width="280" height="28"/>
+                                <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="20"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="t9P-du-7PT" firstAttribute="leading" secondItem="oAA-mN-c7V" secondAttribute="leading" constant="20" id="4vY-13-p4t"/>
+                            <constraint firstAttribute="trailing" secondItem="NyS-rS-biY" secondAttribute="trailing" id="5Sh-ao-8J4"/>
+                            <constraint firstItem="t9P-du-7PT" firstAttribute="top" secondItem="oAA-mN-c7V" secondAttribute="top" constant="32" id="7YV-O2-ZFd"/>
+                            <constraint firstItem="ISB-0G-zre" firstAttribute="leading" secondItem="oAA-mN-c7V" secondAttribute="leading" constant="20" id="7fE-IV-82f"/>
+                            <constraint firstAttribute="bottom" secondItem="ufJ-Hv-dVk" secondAttribute="bottom" constant="-30" id="F5x-Sr-9SF"/>
+                            <constraint firstAttribute="trailing" secondItem="ISB-0G-zre" secondAttribute="trailing" id="UVs-69-ua0"/>
+                            <constraint firstAttribute="bottom" secondItem="NyS-rS-biY" secondAttribute="bottom" id="eIq-07-aVU"/>
+                            <constraint firstAttribute="trailing" secondItem="t9P-du-7PT" secondAttribute="trailing" constant="20" id="jzZ-C9-jRo"/>
+                            <constraint firstItem="NyS-rS-biY" firstAttribute="height" secondItem="oAA-mN-c7V" secondAttribute="height" multiplier="0.8" id="k2W-Sc-LsX"/>
+                            <constraint firstItem="ufJ-Hv-dVk" firstAttribute="height" secondItem="oAA-mN-c7V" secondAttribute="height" id="tTO-AW-rdD"/>
+                            <constraint firstItem="ISB-0G-zre" firstAttribute="top" secondItem="t9P-du-7PT" secondAttribute="bottom" constant="8" id="u8D-5F-bIz"/>
+                            <constraint firstAttribute="trailing" secondItem="ufJ-Hv-dVk" secondAttribute="trailing" constant="-20" id="zL2-az-ePb"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="oAA-mN-c7V" secondAttribute="bottom" constant="5" id="Bbu-0D-1su"/>
+                    <constraint firstItem="oAA-mN-c7V" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="Dlr-8F-aSl"/>
+                    <constraint firstAttribute="trailing" secondItem="oAA-mN-c7V" secondAttribute="trailing" constant="10" id="bje-bB-e0Z"/>
+                    <constraint firstItem="oAA-mN-c7V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="qQn-Ld-SfR"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="containerView" destination="oAA-mN-c7V" id="AQa-Yh-nYJ"/>
+                <outlet property="idLabel" destination="ISB-0G-zre" id="yYM-cB-lYW"/>
+                <outlet property="nameLabel" destination="t9P-du-7PT" id="bGv-cI-Nbc"/>
+                <outlet property="pokemonImageView" destination="NyS-rS-biY" id="nMc-EO-zY4"/>
+            </connections>
+            <point key="canvasLocation" x="-6.1068702290076331" y="28.169014084507044"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="PokeballAlpha" width="835" height="835"/>
+    </resources>
+</document>

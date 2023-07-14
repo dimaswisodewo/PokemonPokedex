@@ -8,15 +8,15 @@
 import UIKit
 import CoreData
 
+enum DatabaseError: Error {
+    case failedToAdd
+    case failedToFetch
+    case failedToUpdate
+    case failedToDelete
+    case failedToConvert
+}
+
 class DataPersistenceManager {
-    
-    enum DatabaseError: Error {
-        case failedToAdd
-        case failedToFetch
-        case failedToUpdate
-        case failedToDelete
-        case failedToConvert
-    }
     
     static let shared = DataPersistenceManager()
     

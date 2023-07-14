@@ -11,8 +11,13 @@ class DownloadViewController: UIViewController {
     
     @IBOutlet weak var downloadedTableView: UITableView! {
         didSet {
+            downloadedTableView.separatorStyle = .none
             downloadedTableView.delegate = self
             downloadedTableView.dataSource = self
+            downloadedTableView.register(
+                UINib(nibName: DownloadTableViewCell.identifier, bundle: nil),
+                forCellReuseIdentifier: DownloadTableViewCell.identifier
+            )
         }
     }
     
@@ -62,14 +67,33 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = UITableViewCell()
-        
-        var contentConfig = cell.defaultContentConfiguration()
-        contentConfig.text = downloadedPokemon[indexPath.row].name
-        
-        cell.contentConfiguration = contentConfig
-        
-        return cell
+        do {
+            guard let cell = downloadedTableView.dequeueReusableCell(withIdentifier: DownloadTableViewCell.identifier) as? DownloadTableViewCell else {
+                throw APIError.failedToFetchData
+            }
+            
+            let model = downloadedPokemon[indexPath.row]
+            guard let name = model.name else { throw DatabaseError.failedToConvert }
+            guard let color = model.color else { throw DatabaseError.failedToConvert }
+            guard let imageString = model.image else { throw DatabaseError.failedToConvert }
+            guard let image = imageString.imageFromBase64 else { throw DatabaseError.failedToConvert }
+            
+            let id = model.id
+            
+            cell.configure(with: name.capitalized)
+            cell.configureId(with: String(id))
+            cell.configureColor(with: color)
+            cell.configureImage(with: image)
+            
+            return cell
+        } catch {
+            let defaultCell = UITableViewCell()
+            var contentConfig = defaultCell.defaultContentConfiguration()
+            contentConfig.text = downloadedPokemon[indexPath.row].name
+            
+            defaultCell.contentConfiguration = contentConfig
+            return defaultCell
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -103,7 +127,7 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        100
+        160
     }
     
 }

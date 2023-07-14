@@ -35,10 +35,6 @@ class PokedexCollectionViewCell: UICollectionViewCell {
         
     }
     
-    override func layoutSubviews() {
-        backgroundImage.alpha = CGFloat(0.5)
-    }
-    
     func configure(with model: PokemonModel) {
         nameLabel.text = model.name.capitalized
     }
