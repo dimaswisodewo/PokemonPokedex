@@ -39,6 +39,7 @@ class DataPersistenceManager {
         entity.id = Int16(model.id)
         entity.name = model.name
         entity.image = model.image
+        entity.color = model.color
         entity.abilities = model.abilities
         entity.types = model.types
         entity.moves = model.moves

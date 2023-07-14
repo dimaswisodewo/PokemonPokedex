@@ -182,7 +182,12 @@ extension PokedexViewController: UICollectionViewDelegate, UICollectionViewDataS
         guard let cell = collectionView.cellForItem(at: indexPath) as? PokedexCollectionViewCell else { return }
         guard let image = cell.imageView.image else { return }
         
-        vc.configure(model: model, pokemonImage: image, pokemonColor: UIColor.getPredefinedColor(name: colorName))
+        vc.configure(
+            model: model,
+            pokemonImage: image,
+            pokemonColorName: colorName,
+            pokemonColor: UIColor.getPredefinedColor(name: colorName)
+        )
         
         navigationController?.pushViewController(vc, animated: true)
     }

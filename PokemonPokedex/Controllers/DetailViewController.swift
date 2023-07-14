@@ -63,6 +63,7 @@ class DetailViewController: UIViewController {
     
     private var pokemonName: String?
     private var pokemonColor: UIColor?
+    private var pokemonColorName: String?
     private var pokemonImage: UIImage?
     private var pokemonDetailModel: PokemonDetailModel?
     
@@ -93,9 +94,10 @@ class DetailViewController: UIViewController {
         segmentedControlContainerView.roundCorners(corners: [.topLeft, .topRight], radius: 45)
     }
 
-    func configure(model: PokemonDetailModel, pokemonImage: UIImage, pokemonColor: UIColor) {
+    func configure(model: PokemonDetailModel, pokemonImage: UIImage, pokemonColorName: String, pokemonColor: UIColor) {
         self.pokemonDetailModel = model
         self.pokemonName = model.name
+        self.pokemonColorName = pokemonColorName
         self.pokemonColor = pokemonColor
         self.pokemonImage = pokemonImage
     }
@@ -265,6 +267,7 @@ class DetailViewController: UIViewController {
         
         guard let detailModel = pokemonDetailModel else { return nil }
         guard let detailImage = pokemonImage else { return nil }
+        guard let color = pokemonColorName else { return nil }
         
         guard let imageBase64 = detailImage.base64 else {
             print("Failed to convert image into base64")
@@ -315,6 +318,7 @@ class DetailViewController: UIViewController {
             types: types,
             moves: moves,
             image: imageBase64,
+            color: color,
             hp: hp,
             attack: attack,
             defense: defense,
