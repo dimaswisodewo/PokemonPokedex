@@ -14,6 +14,7 @@ class DownloadTableViewCell: UITableViewCell {
     @IBOutlet weak var containerView: UIView! {
         didSet {
             containerView.layer.cornerRadius = 24
+            containerView.clipsToBounds = true
         }
     }
     
