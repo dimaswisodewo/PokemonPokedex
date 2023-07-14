@@ -24,10 +24,14 @@ class PokedexViewController: UIViewController {
     private var loadedDataDetails: [PokemonDetailModel] = [PokemonDetailModel]()
     private var loadedDataSpecies: [PokemonSpeciesDetail] = [PokemonSpeciesDetail]()
     
+    // Temporary array to store all data before all requests are completed (will be deleted if failed)
+    private var loadedDataTemporary: [PokemonModel] = [PokemonModel]()
+    private var loadedDataDetailsTemporary: [PokemonDetailModel] = [PokemonDetailModel]()
+    private var loadedDataSpeciesTemporary: [PokemonSpeciesDetail] = [PokemonSpeciesDetail]()
+    
     private var isDataDetailsUpdated = false
     private var isDataSpeciesUpdated = false
     
-    private var isAllDataDisplayed = false
     private var isUpdating = false
     
     private let limit: Int = 20
@@ -51,6 +55,11 @@ class PokedexViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         // Show tab bar
         tabBarController?.tabBar.isHidden = false
+        
+        // Handle when user starting the app offline
+        if loadedData.isEmpty, !isUpdating {
+            loadPokemons()
+        }
     }
     
     private func loadPokemons() {
@@ -61,32 +70,35 @@ class PokedexViewController: UIViewController {
         
         print("Load Pokemons, Limit: \(limit), Offset: \(offset)")
         
-        isAllDataDisplayed = false
+        loadedDataTemporary.removeAll()
         isUpdating = true
         NetworkManager.shared.sendRequest(type: PokemonResponse.self, endpoint: endpoint) { [weak self] result in
             switch result {
             case .success(let models):
-                self?.loadedData.append(contentsOf: models.results)
+                self?.loadedDataTemporary.append(contentsOf: models.results)
                 self?.loadPokemonDetails() // Load images
                 self?.loadPokemonSpecies() // Load background colors
             case .failure(let error):
+                self?.isUpdating = false
                 print(error)
             }
         }
     }
     
     private func loadPokemonDetails() {
-        for pokemonIndex in offset..<loadedData.count {
-            let path = "pokemon/\(loadedData[pokemonIndex].name)/"
+        loadedDataDetailsTemporary.removeAll()
+        for pokemonIndex in 0..<loadedDataTemporary.count {
+            let path = "pokemon/\(loadedDataTemporary[pokemonIndex].name)/"
             var endpoint = Endpoint()
             endpoint.initialize(path: path, query: nil)
             
             NetworkManager.shared.sendRequest(type: PokemonDetailModel.self, endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .success(let model):
-                    self?.loadedDataDetails.append(model)
+                    self?.loadedDataDetailsTemporary.append(model)
                     self?.notificationCenterEmitter()
                 case .failure(let error):
+                    self?.isUpdating = false
                     print(error)
                 }
             }
@@ -94,17 +106,19 @@ class PokedexViewController: UIViewController {
     }
     
     private func loadPokemonSpecies() {
-        for pokemonIndex in offset..<loadedData.count {
-            let path = "pokemon-species/\(loadedData[pokemonIndex].name)/"
+        loadedDataSpeciesTemporary.removeAll()
+        for pokemonIndex in 0..<loadedDataTemporary.count {
+            let path = "pokemon-species/\(loadedDataTemporary[pokemonIndex].name)/"
             var endpoint = Endpoint()
             endpoint.initialize(path: path, query: nil)
             
             NetworkManager.shared.sendRequest(type: PokemonSpeciesDetail.self, endpoint: endpoint) { [weak self] result in
                 switch result {
                 case .success(let model):
-                    self?.loadedDataSpecies.append(model)
+                    self?.loadedDataSpeciesTemporary.append(model)
                     self?.notificationCenterEmitter()
                 case .failure(let error):
+                    self?.isUpdating = false
                     print(error)
                 }
             }
@@ -120,17 +134,24 @@ class PokedexViewController: UIViewController {
     // Emit notif to reload data when all data is loaded
     private func notificationCenterEmitter() {
         
-        isDataDetailsUpdated = loadedDataDetails.count == loadedData.count
-        isDataSpeciesUpdated = loadedDataSpecies.count == loadedData.count
+        isDataDetailsUpdated = loadedDataDetailsTemporary.count == loadedDataTemporary.count
+        isDataSpeciesUpdated = loadedDataSpeciesTemporary.count == loadedDataTemporary.count
         
-        if loadedData.count > 0, loadedDataDetails.count > 0, loadedDataSpecies.count > 0,
+        if loadedDataTemporary.count > 0, loadedDataDetailsTemporary.count > 0, loadedDataSpeciesTemporary.count > 0,
            isDataDetailsUpdated, isDataSpeciesUpdated {
             
             // Sort
-            loadedDataDetails = loadedDataDetails.sorted { $0.id < $1.id }
-            loadedDataSpecies = loadedDataSpecies.sorted { $0.id < $1.id }
+            loadedDataDetailsTemporary = loadedDataDetailsTemporary.sorted { $0.id < $1.id }
+            loadedDataSpeciesTemporary = loadedDataSpeciesTemporary.sorted { $0.id < $1.id }
             
-            isAllDataDisplayed = true
+            loadedData.append(contentsOf: loadedDataTemporary)
+            loadedDataDetails.append(contentsOf: loadedDataDetailsTemporary)
+            loadedDataSpecies.append(contentsOf: loadedDataSpeciesTemporary)
+            
+            loadedDataTemporary.removeAll()
+            loadedDataDetailsTemporary.removeAll()
+            loadedDataSpeciesTemporary.removeAll()
+            
             isUpdating = false
             offset += limit
             
@@ -212,7 +233,7 @@ extension PokedexViewController: UICollectionViewDelegate, UICollectionViewDataS
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
-        if (isAllDataDisplayed && indexPath.item == (offset - 1) && !isUpdating) {
+        if (indexPath.item == (offset - 1)) && !isUpdating {
             // Update data
             loadPokemons()
         }
