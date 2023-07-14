@@ -14,7 +14,8 @@ class DataPersistenceManager {
         case failedToAdd
         case failedToFetch
         case failedToUpdate
-        case failedtoDelete
+        case failedToDelete
+        case failedToConvert
     }
     
     static let shared = DataPersistenceManager()
@@ -39,6 +40,7 @@ class DataPersistenceManager {
         entity.id = Int16(model.id)
         entity.name = model.name
         entity.image = model.image
+        entity.imageUrl = model.imageUrl
         entity.color = model.color
         entity.abilities = model.abilities
         entity.types = model.types
@@ -123,8 +125,180 @@ class DataPersistenceManager {
             isHasChanges = true
             completion(.success(()))
         } catch {
-            completion(.failure(DatabaseError.failedtoDelete))
+            completion(.failure(DatabaseError.failedToDelete))
         }
+    }
+    
+    func unpackFromPokemonEntity(pokemonEntity: PokemonEntity) throws -> (PokemonDetailModel, String, UIImage) {
+        
+        // Abilities
+        guard let entityAbilities = pokemonEntity.abilities else {
+            throw DatabaseError.failedToConvert
+        }
+        let abilitiesString = entityAbilities.components(separatedBy: ", ")
+        var abilities = [PokemonAbilitiesItem]()
+        for abilityString in abilitiesString {
+            let pokemonAbility = PokemonAbility(name: abilityString)
+            let pokemonAbilityItem = PokemonAbilitiesItem(ability: pokemonAbility)
+            abilities.append(pokemonAbilityItem)
+        }
+        
+        // Types
+        guard let entityTypes = pokemonEntity.types else {
+            throw DatabaseError.failedToConvert
+        }
+        let typesString = entityTypes.components(separatedBy: ", ")
+        var types = [PokemonType]()
+        for typeString in typesString {
+            let pokemonTypeDetail = PokemonTypeDetail(name: typeString)
+            let pokemonType = PokemonType(type: pokemonTypeDetail)
+            types.append(pokemonType)
+        }
+        
+        // Stats
+        let stats: [PokemonStats] = [
+            PokemonStats(
+                baseStat: Int(pokemonEntity.hp),
+                stat: PokemonStat(name: "hp")
+            ),
+            PokemonStats(
+                baseStat: Int(pokemonEntity.attack),
+                stat: PokemonStat(name: "attack")
+            ),
+            PokemonStats(
+                baseStat: Int(pokemonEntity.defense),
+                stat: PokemonStat(name: "defense")
+            ),
+            PokemonStats(
+                baseStat: Int(pokemonEntity.specialAttack),
+                stat: PokemonStat(name: "special-attack")
+            ),
+            PokemonStats(
+                baseStat: Int(pokemonEntity.specialDefense),
+                stat: PokemonStat(name: "special-defense")
+            ),
+            PokemonStats(
+                baseStat: Int(pokemonEntity.speed),
+                stat: PokemonStat(name: "speed")
+            )
+        ]
+        
+        // Moves
+        guard let entityMoves = pokemonEntity.moves else {
+            throw DatabaseError.failedToConvert
+        }
+        let movesString = entityMoves.components(separatedBy: ", ")
+        var moves = [PokemonMovesItem]()
+        for moveString in movesString {
+            let pokemonMove = PokemonMove(name: moveString)
+            let pokemonMovesItem = PokemonMovesItem(move: pokemonMove)
+            moves.append(pokemonMovesItem)
+        }
+        
+        // Name
+        guard let entityName = pokemonEntity.name else {
+            throw DatabaseError.failedToConvert
+        }
+        
+        // Image URL
+        guard let imageUrl = pokemonEntity.imageUrl else {
+            throw DatabaseError.failedToConvert
+        }
+        
+        let detailModel = PokemonDetailModel(
+            id: Int(pokemonEntity.id),
+            name: entityName,
+            height: Int(pokemonEntity.height),
+            weight: Int(pokemonEntity.weight),
+            abilities: abilities,
+            types: types,
+            stats: stats,
+            moves: moves,
+            sprites: PokemonSprites(frontDefault: imageUrl)
+        )
+        
+        // Image
+        guard let entityImage = pokemonEntity.image else {
+            throw DatabaseError.failedToConvert
+        }
+        guard let image = entityImage.imageFromBase64 else {
+            throw DatabaseError.failedToConvert
+        }
+        
+        // Color name
+        guard let entityColorName = pokemonEntity.color else {
+            throw DatabaseError.failedToConvert
+        }
+        
+        return (detailModel, entityColorName, image)
+    }
+    
+    // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
+    func convertToPokemonEntityModel(
+        pokemonDetailModel: PokemonDetailModel,
+        pokemonColorName: String,
+        pokemonImage: UIImage) throws -> PokemonEntityModel {
+        
+        guard let imageBase64 = pokemonImage.base64 else {
+            print("Failed to convert image into base64")
+            throw DatabaseError.failedToConvert
+        }
+        
+        // Get stats
+        var hp = 0
+        var attack = 0
+        var defense = 0
+        var spAttack = 0
+        var spDefense = 0
+        var speed = 0
+        for pokemonStats in pokemonDetailModel.stats {
+            switch pokemonStats.stat.name {
+            case "hp":
+                hp = pokemonStats.baseStat
+            case "attack":
+                attack = pokemonStats.baseStat
+            case "defense":
+                defense = pokemonStats.baseStat
+            case "special-attack":
+                spAttack = pokemonStats.baseStat
+            case "special-defense":
+                spDefense = pokemonStats.baseStat
+            case "speed":
+                speed = pokemonStats.baseStat
+            default:
+                print("Stat not found: \(pokemonStats.stat.name)")
+            }
+        }
+        
+        let abilities = pokemonDetailModel.abilities.map { $0.ability.name }.joined(separator: ", ")
+        _ = abilities.dropLast()
+        
+        let types = pokemonDetailModel.types.map { $0.type.name }.joined(separator: ", ")
+        _ = types.dropLast()
+        
+        let moves = pokemonDetailModel.moves.map { $0.move.name }.joined(separator: ", ")
+        _ = moves.dropLast()
+        
+        let model = PokemonEntityModel(
+            id: pokemonDetailModel.id,
+            name: pokemonDetailModel.name,
+            height: pokemonDetailModel.height,
+            weight: pokemonDetailModel.weight,
+            abilities: abilities,
+            types: types,
+            moves: moves,
+            image: imageBase64,
+            imageUrl: pokemonDetailModel.sprites.frontDefault,
+            color: pokemonColorName,
+            hp: hp,
+            attack: attack,
+            defense: defense,
+            specialAttack: spAttack,
+            specialDefense: spDefense,
+            speed: speed
+        )
+        
+        return model
     }
 
 }

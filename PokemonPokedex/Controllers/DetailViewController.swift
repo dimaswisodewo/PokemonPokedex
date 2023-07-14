@@ -228,13 +228,30 @@ class DetailViewController: UIViewController {
     
     // Save to Core Data
     private func saveToCoreData() {
-        guard let model = getPokemonEntityModel() else { return }
-        DataPersistenceManager.shared.addPokemonData(with: model) { [weak self] result in
+        
+        guard let detailModel = pokemonDetailModel else { return }
+        guard let colorName = pokemonColorName else { return }
+        guard let image = pokemonImage else { return }
+        
+        var model: PokemonEntityModel?
+        
+        do {
+            model = try DataPersistenceManager.shared.convertToPokemonEntityModel(
+                pokemonDetailModel: detailModel,
+                pokemonColorName: colorName,
+                pokemonImage: image
+            )
+        } catch {
+            print(error)
+        }
+        
+        guard let unwrappedModel = model else { return }
+        DataPersistenceManager.shared.addPokemonData(with: unwrappedModel) { [weak self] result in
             switch result {
             case .success():
-                print("Saved to Core Data: \(model.name)")
+                print("Saved to Core Data: \(unwrappedModel.name)")
             case .failure(let error):
-                print("Failed to save to Core Data: \(model.name), error message: \(error)")
+                print("Failed to save to Core Data: \(unwrappedModel.name), error message: \(error)")
                 // Undo button image change
                 guard let unwrappedSelf = self else { return }
                 unwrappedSelf.isFavoriteFilled.toggle()
@@ -260,73 +277,5 @@ class DetailViewController: UIViewController {
                 unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
             }
         }
-    }
-    
-    // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
-    private func getPokemonEntityModel() -> PokemonEntityModel? {
-        
-        guard let detailModel = pokemonDetailModel else { return nil }
-        guard let detailImage = pokemonImage else { return nil }
-        guard let color = pokemonColorName else { return nil }
-        
-        guard let imageBase64 = detailImage.base64 else {
-            print("Failed to convert image into base64")
-            return nil
-        }
-        
-        // Get stats
-        var hp = 0
-        var attack = 0
-        var defense = 0
-        var spAttack = 0
-        var spDefense = 0
-        var speed = 0
-        for pokemonStats in detailModel.stats {
-            switch pokemonStats.stat.name {
-            case "hp":
-                hp = pokemonStats.baseStat
-            case "attack":
-                attack = pokemonStats.baseStat
-            case "defense":
-                defense = pokemonStats.baseStat
-            case "special-attack":
-                spAttack = pokemonStats.baseStat
-            case "special-defense":
-                spDefense = pokemonStats.baseStat
-            case "speed":
-                speed = pokemonStats.baseStat
-            default:
-                print("Stat not found: \(pokemonStats.stat.name)")
-            }
-        }
-        
-        let abilities = detailModel.abilities.map { $0.ability.name }.joined(separator: ", ")
-        _ = abilities.dropLast()
-        
-        let types = detailModel.types.map { $0.type.name }.joined(separator: ", ")
-        _ = types.dropLast()
-        
-        let moves = detailModel.moves.map { $0.move.name }.joined(separator: ", ")
-        _ = moves.dropLast()
-        
-        let model = PokemonEntityModel(
-            id: detailModel.id,
-            name: detailModel.name,
-            height: detailModel.height,
-            weight: detailModel.weight,
-            abilities: abilities,
-            types: types,
-            moves: moves,
-            image: imageBase64,
-            color: color,
-            hp: hp,
-            attack: attack,
-            defense: defense,
-            specialAttack: spAttack,
-            specialDefense: spDefense,
-            speed: speed
-        )
-        
-        return model
     }
 }

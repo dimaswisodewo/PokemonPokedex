@@ -17,6 +17,7 @@ struct PokemonEntityModel {
     var types: String
     var moves: String
     var image: String
+    var imageUrl: String
     var color: String
     var hp: Int
     var attack: Int

@@ -56,6 +56,45 @@ extension UIView {
 
 extension UIColor {
     
+    static func getPredefinedColorName(color: UIColor) -> String {
+        
+        let greenColor = UIColor(named: "PrimaryGreen")!
+        let blueColor = UIColor(named: "PrimaryBlue")!
+        let yellowColor = UIColor(named: "PrimaryYellow")!
+        let redColor = UIColor(named: "PrimaryRed")!
+        let purpleColor = UIColor(named: "PrimaryPurple")!
+        let brownColor = UIColor(named: "PrimaryBrown")!
+        let whiteColor = UIColor(named: "PrimaryWhite")!
+        let pinkColor = UIColor(named: "PrimaryPink")!
+        let grayColor = UIColor.gray
+        let blackColor = UIColor(named: "PrimaryBlack")!
+        
+        switch color.cgColor {
+        case greenColor.cgColor:
+            return "green"
+        case blueColor.cgColor:
+            return "blue"
+        case yellowColor.cgColor:
+            return "yellow"
+        case redColor.cgColor:
+            return "red"
+        case purpleColor.cgColor:
+            return "purple"
+        case brownColor.cgColor:
+            return "brown"
+        case whiteColor.cgColor:
+            return "white"
+        case pinkColor.cgColor:
+            return "pink"
+        case grayColor.cgColor:
+            return "gray"
+        case blackColor.cgColor:
+            return "black"
+        default:
+            return "gray"
+        }
+    }
+    
     static func getPredefinedColor(name: String) -> UIColor {
         
         var color = UIColor.lightGray
