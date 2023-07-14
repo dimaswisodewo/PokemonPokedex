@@ -79,6 +79,8 @@ extension UIColor {
             color = UIColor(named: "PrimaryPink")!
         case "gray":
             color = UIColor.gray
+        case "black":
+            color = UIColor(named: "PrimaryBlack")!
         default:
             print("Color not found: \(name)")
             break
