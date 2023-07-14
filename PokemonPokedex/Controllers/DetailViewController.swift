@@ -33,6 +33,13 @@ class DetailViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var favoriteButton: UIButton! {
+        didSet {
+            favoriteButton.isEnabled = false
+            favoriteButton.addTarget(self, action: #selector(favoriteButtonPressed), for: .touchUpInside)
+        }
+    }
+    
     @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var segmentedControlContainerView: UIView!
@@ -52,6 +59,8 @@ class DetailViewController: UIViewController {
         }
     }
     
+    private var isFavoriteFilled = false
+    
     private var pokemonName: String?
     private var pokemonColor: UIColor?
     private var pokemonImage: UIImage?
@@ -64,6 +73,7 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
                 
+        setupFavoriteButton()
         applyDataToView()
         
         loadDetailAbout()
@@ -71,6 +81,12 @@ class DetailViewController: UIViewController {
         loadDetailMoves()
         
         configureViewController()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        // Hide tab bar
+        tabBarController?.tabBar.isHidden = true
     }
     
     override func viewDidLayoutSubviews() {
@@ -82,6 +98,23 @@ class DetailViewController: UIViewController {
         self.pokemonName = model.name
         self.pokemonColor = pokemonColor
         self.pokemonImage = pokemonImage
+    }
+    
+    func setupFavoriteButton() {
+        guard let unwrappedName = pokemonName else { return }
+        DataPersistenceManager.shared.isPokemonExistsInDatabase(with: unwrappedName) { [weak self] result in
+            
+            guard let unwrappedSelf = self else { return }
+            switch result {
+            case .success(let isExists):
+                unwrappedSelf.isFavoriteFilled = isExists
+                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
+                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+                unwrappedSelf.favoriteButton.isEnabled = true
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     @objc func configureViewController() {
@@ -175,5 +208,121 @@ class DetailViewController: UIViewController {
     
     @objc private func backButtonPressed() {
         navigationController?.popToRootViewController(animated: true)
+    }
+    
+    @objc private func favoriteButtonPressed() {
+        
+        // Change button image
+        isFavoriteFilled.toggle()
+        let systemName = isFavoriteFilled ? "heart.fill" : "heart"
+        favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+        
+        if isFavoriteFilled {
+            saveToCoreData()
+        } else {
+            deleteFromCoreData()
+        }
+    }
+    
+    // Save to Core Data
+    private func saveToCoreData() {
+        guard let model = getPokemonEntityModel() else { return }
+        DataPersistenceManager.shared.addPokemonData(with: model) { [weak self] result in
+            switch result {
+            case .success():
+                print("Saved to Core Data: \(model.name)")
+            case .failure(let error):
+                print("Failed to save to Core Data: \(model.name), error message: \(error)")
+                // Undo button image change
+                guard let unwrappedSelf = self else { return }
+                unwrappedSelf.isFavoriteFilled.toggle()
+                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
+                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+            }
+        }
+    }
+    
+    // Delete from Core Data
+    private func deleteFromCoreData() {
+        guard let unwrappedName = pokemonName else { return }
+        DataPersistenceManager.shared.deletePokemonData(with: unwrappedName) { [weak self] result in
+            switch result {
+            case .success():
+                print("Deleted from Core Data: \(unwrappedName)")
+            case .failure(let error):
+                print("Failed to delete from Core Data: \(unwrappedName), error message: \(error)")
+                // Undo button image change
+                guard let unwrappedSelf = self else { return }
+                unwrappedSelf.isFavoriteFilled.toggle()
+                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
+                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+            }
+        }
+    }
+    
+    // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
+    private func getPokemonEntityModel() -> PokemonEntityModel? {
+        
+        guard let detailModel = pokemonDetailModel else { return nil }
+        guard let detailImage = pokemonImage else { return nil }
+        
+        guard let imageBase64 = detailImage.base64 else {
+            print("Failed to convert image into base64")
+            return nil
+        }
+        
+        // Get stats
+        var hp = 0
+        var attack = 0
+        var defense = 0
+        var spAttack = 0
+        var spDefense = 0
+        var speed = 0
+        for pokemonStats in detailModel.stats {
+            switch pokemonStats.stat.name {
+            case "hp":
+                hp = pokemonStats.baseStat
+            case "attack":
+                attack = pokemonStats.baseStat
+            case "defense":
+                defense = pokemonStats.baseStat
+            case "special-attack":
+                spAttack = pokemonStats.baseStat
+            case "special-defense":
+                spDefense = pokemonStats.baseStat
+            case "speed":
+                speed = pokemonStats.baseStat
+            default:
+                print("Stat not found: \(pokemonStats.stat.name)")
+            }
+        }
+        
+        let abilities = detailModel.abilities.map { $0.ability.name }.joined(separator: ", ")
+        _ = abilities.dropLast()
+        
+        let types = detailModel.types.map { $0.type.name }.joined(separator: ", ")
+        _ = types.dropLast()
+        
+        let moves = detailModel.moves.map { $0.move.name }.joined(separator: ", ")
+        _ = moves.dropLast()
+        
+        let model = PokemonEntityModel(
+            id: detailModel.id,
+            name: detailModel.name,
+            height: detailModel.height,
+            weight: detailModel.weight,
+            abilities: abilities,
+            types: types,
+            moves: moves,
+            image: imageBase64,
+            hp: hp,
+            attack: attack,
+            defense: defense,
+            specialAttack: spAttack,
+            specialDefense: spDefense,
+            speed: speed
+        )
+        
+        return model
     }
 }

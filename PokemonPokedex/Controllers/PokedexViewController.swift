@@ -48,6 +48,11 @@ class PokedexViewController: UIViewController {
             object: nil)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        // Show tab bar
+        tabBarController?.tabBar.isHidden = false
+    }
+    
     private func loadPokemons() {
         let path = "pokemon"
         let query = offset == 0 ? "limit=\(limit)" : "limit=\(limit)&offset=\(offset)"
