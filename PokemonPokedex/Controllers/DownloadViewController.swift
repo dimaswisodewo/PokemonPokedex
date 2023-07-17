@@ -211,7 +211,7 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
             self?.handleEditSwipeAction(indexPath: indexPath)
             completion(true)
         }
-        edit.backgroundColor = .white
+        edit.backgroundColor = .systemBackground
         let namelabel = UILabel()
         namelabel.numberOfLines = 2
         namelabel.textAlignment = .center
@@ -225,7 +225,7 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
             self?.handleDeleteSwipeAction(indexPath: indexPath)
             completion(true)
         }
-        delete.backgroundColor = .white
+        delete.backgroundColor = .systemBackground
         let deleteLabel = UILabel()
         deleteLabel.text = "Delete"
         deleteLabel.textColor = .systemRed
