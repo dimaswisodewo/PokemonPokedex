@@ -53,8 +53,7 @@ class PokedexCollectionViewCell: UICollectionViewCell {
     }
     
     func configureImage(with url: String) {
-        guard let url = URL(string: url) else { return }
-        imageView.sd_setImage(with: url)
+        imageView.loadImage(url: url, width: 200, height: 200)
     }
     
 }
