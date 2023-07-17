@@ -81,6 +81,35 @@ class DataPersistenceManager {
         }
     }
     
+    // Update favorited pokemon name
+    func updatePokemonName(pokemonId: Int, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let predicate = NSPredicate(format: "id = %@", String(pokemonId))
+        
+        let request: NSFetchRequest<PokemonEntity>
+        request = PokemonEntity.fetchRequest()
+        request.predicate = predicate
+        
+        do {
+            
+            guard let entity = try context.fetch(request).first else {
+                print("There is no favorited pokemon with id: \(pokemonId)")
+                throw DatabaseError.failedToFetch
+            }
+            
+            entity.name = newName
+            
+            try context.save()
+            isHasChanges = true
+            completion(.success(()))
+        } catch {
+            completion(.failure(DatabaseError.failedToDelete))
+        }
+    }
+    
     func isPokemonExistsInDatabase(with pokemonName: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -101,7 +130,7 @@ class DataPersistenceManager {
         }
     }
     
-    // Delete favorited pokemon
+    // Delete favorited pokemon by name
     func deletePokemonData(with pokemonName: String, completion: @escaping (Result<Void, Error>) -> Void) {
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
@@ -117,6 +146,34 @@ class DataPersistenceManager {
             
             guard let entity = try context.fetch(request).first else {
                 print("There is no favorited pokemon with name: \(pokemonName)")
+                throw DatabaseError.failedToFetch
+            }
+            
+            context.delete(entity)
+            try context.save()
+            isHasChanges = true
+            completion(.success(()))
+        } catch {
+            completion(.failure(DatabaseError.failedToDelete))
+        }
+    }
+    
+    // Delete favorited pokemon
+    func deletePokemonData(id pokemonId: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let predicate = NSPredicate(format: "id = %@", String(pokemonId))
+        
+        let request: NSFetchRequest<PokemonEntity>
+        request = PokemonEntity.fetchRequest()
+        request.predicate = predicate
+        
+        do {
+            
+            guard let entity = try context.fetch(request).first else {
+                print("There is no favorited pokemon with id: \(pokemonId)")
                 throw DatabaseError.failedToFetch
             }
             
@@ -214,7 +271,13 @@ class DataPersistenceManager {
             types: types,
             stats: stats,
             moves: moves,
-            sprites: PokemonSprites(frontDefault: imageUrl)
+            sprites: PokemonSprites(
+                other: OtherSprites(
+                    officialArtwork: OfficialArtwork(
+                        frontDefault: imageUrl
+                    )
+                )
+            )
         )
         
         // Image
@@ -288,7 +351,7 @@ class DataPersistenceManager {
             types: types,
             moves: moves,
             image: imageBase64,
-            imageUrl: pokemonDetailModel.sprites.frontDefault,
+            imageUrl: pokemonDetailModel.sprites.other.officialArtwork.frontDefault,
             color: pokemonColorName,
             hp: hp,
             attack: attack,

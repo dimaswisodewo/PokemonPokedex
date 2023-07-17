@@ -46,6 +46,18 @@ struct PokemonColor: Decodable {
 }
 
 struct PokemonSprites: Decodable {
+    var other: OtherSprites
+}
+
+struct OtherSprites: Decodable {
+    var officialArtwork: OfficialArtwork
+    
+    enum CodingKeys: String, CodingKey {
+        case officialArtwork = "official-artwork"
+    }
+}
+
+struct OfficialArtwork: Decodable {
     var frontDefault: String
     
     enum CodingKeys: String, CodingKey {

@@ -21,7 +21,7 @@ extension UIImageView {
     }
     
     // To save CPU && Memory for large images
-    func loadImage(url: String, width: Float, height: Float) {
+    func loadImage(url: String, width: CGFloat, height: CGFloat) {
         
         guard let url = URL(string: url) else {
             print("Error loading image for \(url)")
@@ -30,7 +30,7 @@ extension UIImageView {
         // Will be 2.0 on 6/7/8 and 3.0 on 6+/7+/8+ or later
         let scale = UIScreen.main.scale
         // Thumbnail will bounds to (200,200) points
-        let thumbnailSize = CGSize(width: 200 * scale, height: 200 * scale)
+        let thumbnailSize = CGSize(width: width * scale, height: width * scale)
         
         self.sd_setImage(
             with: url,
@@ -134,6 +134,22 @@ extension UIImage {
     
     var base64: String? {
         self.pngData()?.base64EncodedString()
+    }
+    
+    // This method creates an image of a view
+    convenience init?(view: UIView) {
+
+        // Based on https://stackoverflow.com/a/41288197/1118398
+        let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+        let image = renderer.image { rendererContext in
+            view.layer.render(in: rendererContext.cgContext)
+        }
+
+        if let cgImage = image.cgImage {
+            self.init(cgImage: cgImage, scale: UIScreen.main.scale, orientation: .up)
+        } else {
+            return nil
+        }
     }
 }
 

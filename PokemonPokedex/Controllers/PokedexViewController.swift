@@ -186,7 +186,7 @@ extension PokedexViewController: UICollectionViewDelegate, UICollectionViewDataS
         }
         
         if isDataDetailsUpdated {
-            cell.configureImage(with: loadedDataDetails[indexPath.row].sprites.frontDefault)
+            cell.configureImage(with: loadedDataDetails[indexPath.row].sprites.other.officialArtwork.frontDefault)
         }
         
         return cell
