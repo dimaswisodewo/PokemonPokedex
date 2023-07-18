@@ -204,8 +204,8 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
         
         let fontMetrics = UIFontMetrics(forTextStyle: .body)
             .scaledFont(
-                for: UIFont(name: "Poppins-Regular", size: 12) ?? UIFont.systemFont(ofSize: 12),
-                maximumPointSize: 12)
+                for: UIFont(name: "Poppins-Regular", size: 14) ?? UIFont.systemFont(ofSize: 14),
+                maximumPointSize: 14)
         
         let edit = UIContextualAction(style: .normal, title: nil) { [weak self] action, view, completion in
             self?.handleEditSwipeAction(indexPath: indexPath)
