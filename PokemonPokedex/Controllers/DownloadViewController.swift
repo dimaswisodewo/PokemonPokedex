@@ -79,11 +79,11 @@ class DownloadViewController: UIViewController {
         }
     }
     
-    private func deleteDownloadedPokemonById(pokemonId: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-        DataPersistenceManager.shared.deletePokemonData(id: pokemonId, completion: completion)
+    private func deleteDownloadedPokemonByName(pokemonName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        DataPersistenceManager.shared.deletePokemonData(with: pokemonName, completion: completion)
     }
     
-    private func showAlertEditPokemonData(pokemonId: Int, indexPath: IndexPath) {
+    private func showAlertEditPokemonData(pokemonName: String, indexPath: IndexPath) {
         let alert = UIAlertController(title: "Change Name", message: "Change pokemon name.", preferredStyle: .alert)
         
         // Add a text field within the alert
@@ -104,7 +104,7 @@ class DownloadViewController: UIViewController {
                 guard let inputText = textField.text else { return }
                 if unwrappedSelf.currentlyEditing.lowercased() == inputText.lowercased() { return } // No changes
                 DataPersistenceManager.shared.updatePokemonName(
-                    pokemonId: pokemonId,
+                    oldName: pokemonName,
                     newName: inputText) { result in
                         switch result {
                         case .success():
@@ -239,14 +239,13 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func handleEditSwipeAction(indexPath: IndexPath) {
-        let pokemonId = Int(downloadedPokemon[indexPath.row].id)
-        showAlertEditPokemonData(pokemonId: pokemonId, indexPath: indexPath)
+        guard let pokemonName = downloadedPokemon[indexPath.row].name else { return }
+        showAlertEditPokemonData(pokemonName: pokemonName, indexPath: indexPath)
     }
     
     private func handleDeleteSwipeAction(indexPath: IndexPath) {
-        let dataToDelete = downloadedPokemon[indexPath.row]
-        let pokemonId = Int(dataToDelete.id)
-        deleteDownloadedPokemonById(pokemonId: pokemonId) { result in
+        guard let pokemonName = downloadedPokemon[indexPath.row].name else { return }
+        deleteDownloadedPokemonByName(pokemonName: pokemonName) { result in
             switch result {
             case .success():
                 print("Deleted")

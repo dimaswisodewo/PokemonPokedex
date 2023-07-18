@@ -82,12 +82,12 @@ class DataPersistenceManager {
     }
     
     // Update favorited pokemon name
-    func updatePokemonName(pokemonId: Int, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func updatePokemonName(oldName: String, newName: String, completion: @escaping (Result<Void, Error>) -> Void) {
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let context = appDelegate.persistentContainer.viewContext
         
-        let predicate = NSPredicate(format: "id = %@", String(pokemonId))
+        let predicate = NSPredicate(format: "name = %@", oldName)
         
         let request: NSFetchRequest<PokemonEntity>
         request = PokemonEntity.fetchRequest()
@@ -96,7 +96,7 @@ class DataPersistenceManager {
         do {
             
             guard let entity = try context.fetch(request).first else {
-                print("There is no favorited pokemon with id: \(pokemonId)")
+                print("There is no favorited pokemon with name: \(oldName)")
                 throw DatabaseError.failedToFetch
             }
             
@@ -146,34 +146,6 @@ class DataPersistenceManager {
             
             guard let entity = try context.fetch(request).first else {
                 print("There is no favorited pokemon with name: \(pokemonName)")
-                throw DatabaseError.failedToFetch
-            }
-            
-            context.delete(entity)
-            try context.save()
-            isHasChanges = true
-            completion(.success(()))
-        } catch {
-            completion(.failure(DatabaseError.failedToDelete))
-        }
-    }
-    
-    // Delete favorited pokemon
-    func deletePokemonData(id pokemonId: Int, completion: @escaping (Result<Void, Error>) -> Void) {
-        
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        let context = appDelegate.persistentContainer.viewContext
-        
-        let predicate = NSPredicate(format: "id = %@", String(pokemonId))
-        
-        let request: NSFetchRequest<PokemonEntity>
-        request = PokemonEntity.fetchRequest()
-        request.predicate = predicate
-        
-        do {
-            
-            guard let entity = try context.fetch(request).first else {
-                print("There is no favorited pokemon with id: \(pokemonId)")
                 throw DatabaseError.failedToFetch
             }
             
