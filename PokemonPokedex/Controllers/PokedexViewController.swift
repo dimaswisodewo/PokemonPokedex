@@ -39,7 +39,7 @@ class PokedexViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
         
         // Handle when user starting the app offline
-        if !viewModel.getIsUpdating, viewModel.getLoadedDataCount > 0 {
+        if !viewModel.getIsUpdating, viewModel.getLoadedDataCount == 0 {
             viewModel.loadPokemons()
         }
     }
@@ -98,9 +98,7 @@ extension PokedexViewController: UICollectionViewDelegate, UICollectionViewDataS
         vc.configure(
             model: model,
             pokemonImage: image,
-            pokemonColorName: species.color.name,
-            pokemonColor: UIColor.getPredefinedColor(name: species.color.name)
-        )
+            pokemonColorName: species.color.name)
 
         navigationController?.pushViewController(vc, animated: true)
     }

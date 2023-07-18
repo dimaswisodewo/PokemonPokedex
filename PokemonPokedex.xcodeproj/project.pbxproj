@@ -34,6 +34,7 @@
 		388358F12A5E3BD8000FE99C /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 388358DE2A5E3182000FE99C /* Poppins-SemiBold.ttf */; };
 		388358F32A5E4FA2000FE99C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 388358F22A5E4FA2000FE99C /* DetailViewController.swift */; };
 		38A8F1AD2A6684740015F05F /* PokedexViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A8F1AC2A6684740015F05F /* PokedexViewModel.swift */; };
+		38C2FF802A66E33D00F389C6 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C2FF7F2A66E33D00F389C6 /* DetailViewModel.swift */; };
 		38D7CF692A5EE06C008C59BF /* DetailAboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D7CF672A5EE06C008C59BF /* DetailAboutViewController.swift */; };
 		38D7CF6C2A5EE095008C59BF /* DetailAboutStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 38D7CF6B2A5EE095008C59BF /* DetailAboutStoryboard.storyboard */; };
 		38D7CF6E2A5F05CC008C59BF /* DetailStatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38D7CF6D2A5F05CC008C59BF /* DetailStatsViewController.swift */; };
@@ -68,6 +69,7 @@
 		388358E82A5E3368000FE99C /* PokedexCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PokedexCollectionViewCell.xib; sourceTree = "<group>"; };
 		388358F22A5E4FA2000FE99C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		38A8F1AC2A6684740015F05F /* PokedexViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokedexViewModel.swift; sourceTree = "<group>"; };
+		38C2FF7F2A66E33D00F389C6 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		38D7CF672A5EE06C008C59BF /* DetailAboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailAboutViewController.swift; sourceTree = "<group>"; };
 		38D7CF6B2A5EE095008C59BF /* DetailAboutStoryboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = DetailAboutStoryboard.storyboard; sourceTree = "<group>"; };
 		38D7CF6D2A5F05CC008C59BF /* DetailStatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailStatsViewController.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				38A8F1AC2A6684740015F05F /* PokedexViewModel.swift */,
+				38C2FF7F2A66E33D00F389C6 /* DetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -288,6 +291,7 @@
 				385F4B662A5D479B00A1CA6B /* AppDelegate.swift in Sources */,
 				385F4B682A5D479B00A1CA6B /* SceneDelegate.swift in Sources */,
 				388358E72A5E333C000FE99C /* PokedexCollectionViewCell.swift in Sources */,
+				38C2FF802A66E33D00F389C6 /* DetailViewModel.swift in Sources */,
 				3839F1622A60D00700212197 /* DataPersistenceManager.swift in Sources */,
 				3839F1602A60CD5C00212197 /* DownloadViewController.swift in Sources */,
 				388358F32A5E4FA2000FE99C /* DetailViewController.swift in Sources */,

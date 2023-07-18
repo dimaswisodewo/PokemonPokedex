@@ -184,9 +184,7 @@ extension DownloadViewController: UITableViewDelegate, UITableViewDataSource {
         vc.configure(
             model: detailModel,
             pokemonImage: image,
-            pokemonColorName: colorName,
-            pokemonColor: UIColor.getPredefinedColor(name: colorName)
-        )
+            pokemonColorName: colorName)
         
         navigationController?.pushViewController(vc, animated: true)
     }

@@ -19,7 +19,7 @@
             <objects>
                 <viewController storyboardIdentifier="DetailAboutViewController" id="Y6W-OH-hqX" customClass="DetailAboutViewController" customModule="PokemonPokedex" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="320"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="300"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="19c-eP-7Nn">
@@ -120,7 +120,7 @@
                             <constraint firstItem="mBM-6k-cL5" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="yoN-bL-d1J"/>
                         </constraints>
                     </view>
-                    <size key="freeformSize" width="393" height="320"/>
+                    <size key="freeformSize" width="393" height="300"/>
                     <connections>
                         <outlet property="abilitiesLabel" destination="X4x-N8-Uhz" id="BI8-gV-GbC"/>
                         <outlet property="heightLabel" destination="kRD-kg-oCI" id="ThR-d0-gYG"/>
