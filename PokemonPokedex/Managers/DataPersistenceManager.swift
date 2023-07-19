@@ -158,7 +158,7 @@ class DataPersistenceManager {
         }
     }
     
-    func unpackFromPokemonEntity(pokemonEntity: PokemonEntity) throws -> (PokemonDetailModel, String, UIImage) {
+    func unpackFromPokemonEntity(pokemonEntity: PokemonEntity) throws -> (PokemonDetailModel, String, String) {
         
         // Abilities
         guard let entityAbilities = pokemonEntity.abilities else {
@@ -256,28 +256,20 @@ class DataPersistenceManager {
         guard let entityImage = pokemonEntity.image else {
             throw DatabaseError.failedToConvert
         }
-        guard let image = entityImage.imageFromBase64 else {
-            throw DatabaseError.failedToConvert
-        }
         
         // Color name
         guard let entityColorName = pokemonEntity.color else {
             throw DatabaseError.failedToConvert
         }
         
-        return (detailModel, entityColorName, image)
+        return (detailModel, entityColorName, entityImage)
     }
     
     // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
     func convertToPokemonEntityModel(
         pokemonDetailModel: PokemonDetailModel,
         pokemonColorName: String,
-        pokemonImage: UIImage) throws -> PokemonEntityModel {
-        
-        guard let imageBase64 = pokemonImage.base64 else {
-            print("Failed to convert image into base64")
-            throw DatabaseError.failedToConvert
-        }
+        encodedImage: String) throws -> PokemonEntityModel {
         
         // Get stats
         var hp = 0
@@ -322,70 +314,7 @@ class DataPersistenceManager {
             abilities: abilities,
             types: types,
             moves: moves,
-            image: imageBase64,
-            imageUrl: pokemonDetailModel.sprites.other.officialArtwork.frontDefault,
-            color: pokemonColorName,
-            hp: hp,
-            attack: attack,
-            defense: defense,
-            specialAttack: spAttack,
-            specialDefense: spDefense,
-            speed: speed
-        )
-        
-        return model
-    }
-    
-    // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
-    func convertToPokemonEntityModel(
-        pokemonDetailModel: PokemonDetailModel,
-        pokemonColorName: String,
-        pokemonImageBase64: String) throws -> PokemonEntityModel {
-        
-        // Get stats
-        var hp = 0
-        var attack = 0
-        var defense = 0
-        var spAttack = 0
-        var spDefense = 0
-        var speed = 0
-        for pokemonStats in pokemonDetailModel.stats {
-            switch pokemonStats.stat.name {
-            case "hp":
-                hp = pokemonStats.baseStat
-            case "attack":
-                attack = pokemonStats.baseStat
-            case "defense":
-                defense = pokemonStats.baseStat
-            case "special-attack":
-                spAttack = pokemonStats.baseStat
-            case "special-defense":
-                spDefense = pokemonStats.baseStat
-            case "speed":
-                speed = pokemonStats.baseStat
-            default:
-                print("Stat not found: \(pokemonStats.stat.name)")
-            }
-        }
-        
-        let abilities = pokemonDetailModel.abilities.map { $0.ability.name }.joined(separator: ", ")
-        _ = abilities.dropLast()
-        
-        let types = pokemonDetailModel.types.map { $0.type.name }.joined(separator: ", ")
-        _ = types.dropLast()
-        
-        let moves = pokemonDetailModel.moves.map { $0.move.name }.joined(separator: ", ")
-        _ = moves.dropLast()
-        
-        let model = PokemonEntityModel(
-            id: pokemonDetailModel.id,
-            name: pokemonDetailModel.name,
-            height: pokemonDetailModel.height,
-            weight: pokemonDetailModel.weight,
-            abilities: abilities,
-            types: types,
-            moves: moves,
-            image: pokemonImageBase64,
+            image: encodedImage,
             imageUrl: pokemonDetailModel.sprites.other.officialArtwork.frontDefault,
             color: pokemonColorName,
             hp: hp,

@@ -70,7 +70,7 @@ class DetailViewModel {
             model = try DataPersistenceManager.shared.convertToPokemonEntityModel(
                 pokemonDetailModel: pokemonDetailModel,
                 pokemonColorName: pokemonColorName,
-                pokemonImageBase64: encodedImage)
+                encodedImage: encodedImage)
         } catch {
             print(error)
         }

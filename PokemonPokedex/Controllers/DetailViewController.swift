@@ -5,7 +5,7 @@
 //  Created by Dimas Wisodewo on 12/07/23.
 //
 
-import UIKit
+import UIKit.UIImage
 
 class DetailViewController: UIViewController {
     
