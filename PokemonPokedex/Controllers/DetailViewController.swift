@@ -102,7 +102,7 @@ class DetailViewController: UIViewController {
             pokemonColorName: pokemonColorName)
     }
     
-    func setupFavoriteButton() {
+    private func setupFavoriteButton() {
         unwrappedViewModel.setupFavoriteButton { [weak self] isExistsInDatabase in
             let systemName = isExistsInDatabase ? "heart.fill" : "heart"
             self?.favoriteButton.setImage(
@@ -113,7 +113,7 @@ class DetailViewController: UIViewController {
         }
     }
     
-    @objc func configureViewController() {
+    @objc private func configureViewController() {
         
         let selectedSegmentIndex = segmentedControl.selectedSegmentIndex
         scrollView.showsVerticalScrollIndicator = selectedSegmentIndex < 2
