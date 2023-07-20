@@ -158,7 +158,7 @@ class DataPersistenceManager {
         }
     }
     
-    func unpackFromPokemonEntity(pokemonEntity: PokemonEntity) throws -> (PokemonDetailModel, String, UIImage) {
+    func unpackFromPokemonEntity(pokemonEntity: PokemonEntity) throws -> (PokemonDetailModel, String, String) {
         
         // Abilities
         guard let entityAbilities = pokemonEntity.abilities else {
@@ -256,28 +256,20 @@ class DataPersistenceManager {
         guard let entityImage = pokemonEntity.image else {
             throw DatabaseError.failedToConvert
         }
-        guard let image = entityImage.imageFromBase64 else {
-            throw DatabaseError.failedToConvert
-        }
         
         // Color name
         guard let entityColorName = pokemonEntity.color else {
             throw DatabaseError.failedToConvert
         }
         
-        return (detailModel, entityColorName, image)
+        return (detailModel, entityColorName, entityImage)
     }
     
     // Get PokemonEntityModel to save to CoreData based on current PokemonDetail data
     func convertToPokemonEntityModel(
         pokemonDetailModel: PokemonDetailModel,
         pokemonColorName: String,
-        pokemonImage: UIImage) throws -> PokemonEntityModel {
-        
-        guard let imageBase64 = pokemonImage.base64 else {
-            print("Failed to convert image into base64")
-            throw DatabaseError.failedToConvert
-        }
+        encodedImage: String) throws -> PokemonEntityModel {
         
         // Get stats
         var hp = 0
@@ -322,7 +314,7 @@ class DataPersistenceManager {
             abilities: abilities,
             types: types,
             moves: moves,
-            image: imageBase64,
+            image: encodedImage,
             imageUrl: pokemonDetailModel.sprites.other.officialArtwork.frontDefault,
             color: pokemonColorName,
             hp: hp,

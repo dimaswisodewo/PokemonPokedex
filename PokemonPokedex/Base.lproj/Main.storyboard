@@ -205,6 +205,7 @@
                         <outlet property="idLabel" destination="i3L-cr-UiR" id="hKo-yy-zN2"/>
                         <outlet property="scrollView" destination="Wd6-ne-yIz" id="vMg-0y-ATM"/>
                         <outlet property="scrollViewChild" destination="QVD-cw-HKf" id="8sO-ap-arY"/>
+                        <outlet property="scrollViewChildHeightConstraint" destination="qEb-rO-C9c" id="bpH-ae-6V6"/>
                         <outlet property="segmentedControl" destination="L7C-9U-ULL" id="qfx-gP-t5i"/>
                         <outlet property="segmentedControlContainerView" destination="cA9-vH-QE8" id="a2N-fX-rOK"/>
                         <outlet property="titleLabel" destination="04j-jL-AQk" id="bhy-Ps-lld"/>

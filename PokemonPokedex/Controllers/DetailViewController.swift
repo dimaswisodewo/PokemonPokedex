@@ -5,7 +5,7 @@
 //  Created by Dimas Wisodewo on 12/07/23.
 //
 
-import UIKit
+import UIKit.UIImage
 
 class DetailViewController: UIViewController {
     
@@ -13,12 +13,7 @@ class DetailViewController: UIViewController {
     
     @IBOutlet weak var idLabel: UILabel!
     
-    @IBOutlet weak var titleLabel: UILabel! {
-        didSet {
-            guard let model = pokemonDetailModel else { return }
-            titleLabel.text = model.name
-        }
-    }
+    @IBOutlet weak var titleLabel: UILabel!
     
     @IBOutlet weak var detailImageView: UIImageView! {
         didSet {
@@ -59,17 +54,22 @@ class DetailViewController: UIViewController {
         }
     }
     
-    private var isFavoriteFilled = false
+    @IBOutlet weak var scrollViewChildHeightConstraint: NSLayoutConstraint!
     
-    private var pokemonName: String?
-    private var pokemonColor: UIColor?
-    private var pokemonColorName: String?
     private var pokemonImage: UIImage?
-    private var pokemonDetailModel: PokemonDetailModel?
     
     private var detailAboutVC: DetailAboutViewController?
     private var detailStatsVC: DetailStatsViewController?
     private var detailMovesVC: DetailMovesViewController?
+    
+    private var isFavoriteFilled = false
+    
+    private var viewModel: DetailViewModel?
+    private var unwrappedViewModel: DetailViewModel {
+        get {
+            return viewModel!
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,32 +94,26 @@ class DetailViewController: UIViewController {
         segmentedControlContainerView.roundCorners(corners: [.topLeft, .topRight], radius: 45)
     }
 
-    func configure(model: PokemonDetailModel, pokemonImage: UIImage, pokemonColorName: String, pokemonColor: UIColor) {
-        self.pokemonDetailModel = model
-        self.pokemonName = model.name
-        self.pokemonColorName = pokemonColorName
-        self.pokemonColor = pokemonColor
+    func configure(model: PokemonDetailModel, pokemonImage: UIImage, pokemonColorName: String) {
+        
         self.pokemonImage = pokemonImage
+        self.viewModel = DetailViewModel(
+            pokemonDetailModel: model,
+            pokemonColorName: pokemonColorName)
     }
     
-    func setupFavoriteButton() {
-        guard let unwrappedName = pokemonName else { return }
-        DataPersistenceManager.shared.isPokemonExistsInDatabase(with: unwrappedName) { [weak self] result in
-            
-            guard let unwrappedSelf = self else { return }
-            switch result {
-            case .success(let isExists):
-                unwrappedSelf.isFavoriteFilled = isExists
-                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
-                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
-                unwrappedSelf.favoriteButton.isEnabled = true
-            case .failure(let error):
-                print(error)
-            }
+    private func setupFavoriteButton() {
+        unwrappedViewModel.setupFavoriteButton { [weak self] isExistsInDatabase in
+            let systemName = isExistsInDatabase ? "heart.fill" : "heart"
+            self?.favoriteButton.setImage(
+                UIImage(systemName: systemName),
+                for: .normal)
+            self?.isFavoriteFilled = isExistsInDatabase
+            self?.favoriteButton.isEnabled = true
         }
     }
     
-    @objc func configureViewController() {
+    @objc private func configureViewController() {
         
         let selectedSegmentIndex = segmentedControl.selectedSegmentIndex
         scrollView.showsVerticalScrollIndicator = selectedSegmentIndex < 2
@@ -133,79 +127,77 @@ class DetailViewController: UIViewController {
         switch selectedSegmentIndex {
         // About
         case 0:
-            height = detailAboutVC?.view.bounds.size.height ?? 0
+            height = detailAboutVC?.height ?? 0
         // Base stats
         case 1:
-            height = detailStatsVC?.view.bounds.size.height ?? 0
+            height = detailStatsVC?.height ?? 0
             detailStatsVC?.applyModelToView()
         // Moves
         case 2:
-            height = detailMovesVC?.view.bounds.size.height ?? 0
+            height = scrollView.bounds.size.height
         default:
-            height = detailAboutVC?.view.bounds.size.height ?? 0
+            height = detailAboutVC?.height ?? 0
         }
         
-        scrollViewChild.frame.size.height = height
-        print("Set to \(height)")
+        scrollViewChildHeightConstraint.constant = height
+//        scrollViewChild.layoutIfNeeded()
+        
+//        print("Set to \(height)")
     }
     
     private func applyDataToView() {
-        view.backgroundColor = pokemonColor ?? UIColor.lightGray.withAlphaComponent(0.5)
-        guard let unwrappedModel = pokemonDetailModel else { return }
-        titleLabel.text = unwrappedModel.name.capitalized
-        detailImageView.image = pokemonImage
         
-        let idString = String(unwrappedModel.id)
-        var editedString = "#"
-        for _ in 0..<(4-idString.count) {
-            editedString.append("0")
-        }
-        editedString.append(idString)
-        idLabel.text = editedString
+        let colorName = unwrappedViewModel.getPokemonColorName
+        view.backgroundColor = UIColor.getPredefinedColor(name: colorName)
+        
+        idLabel.text = unwrappedViewModel.getPokemonFormattedId
+        titleLabel.text = unwrappedViewModel.getPokemonDetailModel.name.capitalized
+        detailImageView.image = pokemonImage
     }
     
     private func loadDetailAbout() {
+        
         let storyboard = UIStoryboard(name: "DetailAboutStoryboard", bundle: nil)
         guard let vc = storyboard.instantiateViewController(withIdentifier: "DetailAboutViewController") as? DetailAboutViewController else { return }
-        
+
         detailAboutVC = vc
         containerViewController.addSubview(vc.view)
-        
-//        vc.view.frame = self.containerViewController.bounds
+
         let width = self.containerViewController.bounds.size.width
-        let height = vc.view.bounds.size.height
+        let height = vc.height
         vc.view.frame = CGRect(x: .zero, y: .zero, width: width, height: height)
-        print("Detail about page height: \(height)")
-        
-        vc.configure(with: self.pokemonDetailModel!)
+//        print("Detail about page height: \(height)")
+
+        vc.configure(with: unwrappedViewModel.getPokemonDetailModel)
     }
     
     private func loadDetailStats() {
+        
         let storyboard = UIStoryboard(name: "DetailStatsStoryboard", bundle: nil)
         guard let vc = storyboard.instantiateViewController(withIdentifier: "DetailStatsViewController") as? DetailStatsViewController else { return }
-        
+
         detailStatsVC = vc
         containerViewController.addSubview(vc.view)
-        
-//        vc.view.frame = self.containerViewController.bounds
+
         let width = self.containerViewController.bounds.size.width
-        let height = vc.view.bounds.size.height
+        let height = vc.height
         vc.view.frame = CGRect(x: .zero, y: .zero, width: width, height: height)
-        print("Detail stats page height: \(height)")
-        
-        vc.configure(with: self.pokemonDetailModel!.stats)
+//        print("Detail stats page height: \(height)")
+
+        vc.configure(with: unwrappedViewModel.getPokemonDetailModel.stats)
     }
     
     private func loadDetailMoves() {
+        
         let storyboard = UIStoryboard(name: "DetailMovesStoryboard", bundle: nil)
         guard let vc = storyboard.instantiateViewController(withIdentifier: "DetailMovesViewController") as? DetailMovesViewController else { return }
-        
+
         detailMovesVC = vc
         containerViewController.addSubview(vc.view)
-        
+
         vc.view.frame = self.containerViewController.bounds
-        
-        vc.configure(with: self.pokemonDetailModel!.moves)
+
+        vc.configure(with: unwrappedViewModel.getPokemonDetailModel.moves)
     }
     
     @objc private func backButtonPressed() {
@@ -214,67 +206,28 @@ class DetailViewController: UIViewController {
     
     @objc private func favoriteButtonPressed() {
         
-        // Change button image
+        if !isFavoriteFilled {
+            guard let detailImage = pokemonImage else { return }
+            guard let encodedImage = detailImage.base64 else { return }
+            unwrappedViewModel.setEncodedImage(base64Image: encodedImage)
+        }
+        
         isFavoriteFilled.toggle()
-        let systemName = isFavoriteFilled ? "heart.fill" : "heart"
-        favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
-        
         if isFavoriteFilled {
-            saveToCoreData()
-        } else {
-            deleteFromCoreData()
-        }
-    }
-    
-    // Save to Core Data
-    private func saveToCoreData() {
-        
-        guard let detailModel = pokemonDetailModel else { return }
-        guard let colorName = pokemonColorName else { return }
-        guard let image = pokemonImage else { return }
-        
-        var model: PokemonEntityModel?
-        
-        do {
-            model = try DataPersistenceManager.shared.convertToPokemonEntityModel(
-                pokemonDetailModel: detailModel,
-                pokemonColorName: colorName,
-                pokemonImage: image
-            )
-        } catch {
-            print(error)
-        }
-        
-        guard let unwrappedModel = model else { return }
-        DataPersistenceManager.shared.addPokemonData(with: unwrappedModel) { [weak self] result in
-            switch result {
-            case .success():
-                print("Saved to Core Data: \(unwrappedModel.name)")
-            case .failure(let error):
-                print("Failed to save to Core Data: \(unwrappedModel.name), error message: \(error)")
-                // Undo button image change
-                guard let unwrappedSelf = self else { return }
-                unwrappedSelf.isFavoriteFilled.toggle()
-                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
-                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+            unwrappedViewModel.saveToCoreData { [weak self] isSaveSuccess in
+                let systemName = isSaveSuccess ? "heart.fill" : "heart"
+                self?.favoriteButton.setImage(
+                    UIImage(systemName: systemName),
+                    for: .normal)
+                self?.isFavoriteFilled = isSaveSuccess
             }
-        }
-    }
-    
-    // Delete from Core Data
-    private func deleteFromCoreData() {
-        guard let unwrappedName = pokemonName else { return }
-        DataPersistenceManager.shared.deletePokemonData(with: unwrappedName) { [weak self] result in
-            switch result {
-            case .success():
-                print("Deleted from Core Data: \(unwrappedName)")
-            case .failure(let error):
-                print("Failed to delete from Core Data: \(unwrappedName), error message: \(error)")
-                // Undo button image change
-                guard let unwrappedSelf = self else { return }
-                unwrappedSelf.isFavoriteFilled.toggle()
-                let systemName = unwrappedSelf.isFavoriteFilled ? "heart.fill" : "heart"
-                unwrappedSelf.favoriteButton.setImage(UIImage(systemName: systemName), for: .normal)
+        } else {
+            unwrappedViewModel.deleteFromCoreData { [weak self] isDeleteSuccess in
+                let systemName = isDeleteSuccess ? "heart" : "heart.fill"
+                self?.favoriteButton.setImage(
+                    UIImage(systemName: systemName),
+                    for: .normal)
+                self?.isFavoriteFilled = !isDeleteSuccess
             }
         }
     }

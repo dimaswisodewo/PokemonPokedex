@@ -9,6 +9,8 @@ import UIKit
 
 class DetailAboutViewController: UIViewController {
 
+    let height: CGFloat = 300
+    
     @IBOutlet weak var heightLabel: UILabel!
     
     @IBOutlet weak var weightLabel: UILabel!

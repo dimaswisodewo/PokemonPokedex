@@ -9,6 +9,8 @@ import UIKit
 
 class DetailStatsViewController: UIViewController {
     
+    let height: CGFloat = 360
+    
     @IBOutlet weak var hpValueLabel: UILabel!
     
     @IBOutlet weak var hpProgress: UIProgressView!
